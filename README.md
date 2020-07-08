@@ -1,8 +1,6 @@
 # pwnagotchi-plugin-gpsd
 a plugin for [pwnagotchi](pwnagotchi.ai) that shows your GPS location from [GPSD](https://gpsd.gitlab.io/gpsd/index.html)
 
-**N.B.:** This is currently untested and probably doesn't work yet. It was just what I could hack together in a morning.
-
 ## Why?
 [Bettercap](https://www.bettercap.org/modules/utils/gps/) has built in support for GPS devices, and this is how the [pwnagotchi gps module](https://github.com/evilsocket/pwnagotchi/blob/master/pwnagotchi/plugins/default/gps.py) gets location information. But Bettercap's GPS support is very bare-bones. By using GPSD we get all of the nice features that GSPD adds:
 * GPS setup and polling earlier in the boot process.
