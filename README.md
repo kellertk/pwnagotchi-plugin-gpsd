@@ -34,7 +34,7 @@ GPSD_OPTIONS="-n"
 EOF
 pi@pwnagotchi:~ $ sudo systemctl enable gpsd.service
 pi@pwnagotchi:~ $ sudo systemctl start gpsd.service
-pi@pwnagotchi:~ $ sudo mkdir -p /usr/local/share/pwnagotchi/installed-plugins/"
+pi@pwnagotchi:~ $ sudo mkdir -p /usr/local/share/pwnagotchi/installed-plugins/
 ```
 
 Test out your GPS with `gpsmon`. These are generic instructions for setting up and testing GPSD, you may need to do something differently.
