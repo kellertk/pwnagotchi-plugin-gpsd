@@ -36,6 +36,26 @@ GPSD_OPTIONS="-n"
 EOF
 pi@pwnagotchi:~ $ sudo systemctl enable gpsd.service
 pi@pwnagotchi:~ $ sudo systemctl start gpsd.service
+pi@pwnagotchi:~ $ sudo mkdir -p /usr/local/share/pwnagotchi/installed-plugins/"
 ```
 
 Test out your GPS with `gpsmon`. These are generic instructions for setting up and testing GPSD, you may need to do something differently.
+
+## Setup
+In `config.toml`, set
+```
+main.custom_plugins = "/usr/local/share/pwnagotchi/installed-plugins/"
+main.plugins.gpsd.enable = true
+main.plugins.gpsd.gpsdhost = "127.0.0.1"
+main.plugins.gpsd.port = 2947
+```
+
+Place gpsd.py in `/usr/local/share/pwnagotchi/installed-plugins`
+
+## Finished!
+
+Here's what it looks like. Sort of.
+![Front image of pwnagotchi](https://i.imgur.com/3aVdWFQ.jpg)
+
+Here's the GPS on the back.
+![Back image of pwnagotchi](https://i.imgur.com/LdJQ9UH.jpg)

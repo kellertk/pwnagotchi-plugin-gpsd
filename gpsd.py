@@ -3,44 +3,60 @@
 # Requires https://github.com/MartijnBraam/gpsd-py3
 import json
 import logging
-import gpsd
 
 import pwnagotchi.plugins as plugins
 import pwnagotchi.ui.fonts as fonts
 from pwnagotchi.ui.components import LabeledValue
 from pwnagotchi.ui.view import BLACK
+import pwnagotchi
+import gpsd
 
-class GPSD(plugins.Plugin):
+class GPSD:
+    def __init__(self, gpsdhost, gpsdport):
+        gpsd.connect(host=gpsdhost, port=gpsdport)
+        self.running = True
+        self.coords = {
+            "Latitude": None,
+            "Longitude": None,
+            "Altitude": None
+        }
+
+    def update_gps(self):
+        if self.running:
+            packet = gpsd.get_current()
+            if packet.mode >= 2:
+                    self.coords = {
+                        "Latitude": packet.lat,
+                        "Longitude": packet.lon,
+                        "Altitude": packet.alt if packet.mode > 2 else None
+                    }
+        return self.coords
+
+class gpsd_coord(plugins.Plugin):
     __author__ = "tom@dankmemes2020.com"
     __version__ = "1.0.0"
     __license__ = "GPL3"
     __description__ = "Talk to GPSD and save coordinates whenever a handshake is captured."
 
     def __init__(self):
-        pass
+        self.gpsd = None
 
     def on_loaded(self):
-        logging.info("gpsd plugin loaded")
-
-    def on_ready(self):
-        gpsd.connect(host=self.options['gpsdhost'], port=self.options['gpsdport'])
-        self.running = True
+        self.gpsd = GPSD(self.options['gpsdhost'], self.options['gpsdport'])
+        logging.info("[gpsd] plugin loaded")
 
     def on_handshake(self, agent, filename, access_point, client_station):
-        if self.running:
-            packet = gpsd.get_current()
-            if packet.mode >= 2:
-                self.coordinates = {
-                    "Latitude": packet.lat,
-                    "Longitude": packet.lon,
-                    "Altitude": packet.alt if packet.mode > 2 else None
-                }
-                gps_filename = filename.replace(".pcap", ".gps.json")
-                logging.info(f"saving GPS to {gps_filename} ({self.coordinates})")
-                with open(gps_filename, "w+t") as fp:
-                    json.dumps(self.coordinates, fp)
-            else:
-                logging.info("not saving GPS: no fix")
+        coords = self.gpsd.update_gps()
+        if coords and all([
+            # avoid 0.000... measurements
+            coords["Latitude"], coords["Longitude"]
+        ]):
+            gps_filename = filename.replace(".pcap", ".gps.json")
+            logging.info(f"[gpsd] saving GPS to {gps_filename} ({coords})")
+            with open(gps_filename, "w+t") as fp:
+                json.dump(coords, fp)
+        else:
+            logging.info("[gpsd] not saving GPS: no fix")
 
     def on_ui_setup(self, ui):
         # add coordinates for other displays
@@ -121,12 +137,13 @@ class GPSD(plugins.Plugin):
             ui.remove_element('altitude')
 
     def on_ui_update(self, ui):
-        if self.coordinates and all([
+        coords = self.gpsd.update_gps()
+        if coords and all([
             # avoid 0.000... measurements
-            self.coordinates["Latitude"], self.coordinates["Longitude"]
+            coords["Latitude"], coords["Longitude"]
         ]):
             # last char is sometimes not completely drawn
             # using an ending-whitespace as workaround on each line
-            ui.set("latitude", f"{self.coordinates['Latitude']:.4f} ")
-            ui.set("longitude", f" {self.coordinates['Longitude']:.4f} ")
-            ui.set("altitude", f" {self.coordinates['Altitude']:.1f}m ")
+            ui.set("latitude", f"{coords['Latitude']:.4f} ")
+            ui.set("longitude", f" {coords['Longitude']:.4f} ")
+            ui.set("altitude", f" {coords['Altitude']:.1f}m ")
