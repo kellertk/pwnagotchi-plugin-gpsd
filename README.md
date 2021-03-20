@@ -28,6 +28,8 @@ USBAUTO="false"
 # Devices gpsd should collect to at boot time.
 # They need to be read/writeable, either by user gpsd or the group dialout.
 DEVICES="/dev/ttyS0"
+# or, if you want to setup with BlueNMEA on your android phone, with bt-tethering :
+# DEVICES="tcp://192.168.44.1:4352"
 
 # Other options you want to pass to gpsd
 GPSD_OPTIONS="-n"
@@ -45,7 +47,7 @@ In `config.toml`, set
 main.custom_plugins = "/usr/local/share/pwnagotchi/installed-plugins/"
 main.plugins.gpsd.enable = true
 main.plugins.gpsd.gpsdhost = "127.0.0.1"
-main.plugins.gpsd.port = 2947
+main.plugins.gpsd.gpsdport = 2947
 ```
 
 Place gpsd.py in `/usr/local/share/pwnagotchi/installed-plugins`
