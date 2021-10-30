@@ -47,6 +47,21 @@ class gpsd_coord(plugins.Plugin):
         self.gpsd = GPSD(self.options['gpsdhost'], self.options['gpsdport'])
         logging.info("[gpsd] plugin loaded")
 
+    def on_ready(self, agent):
+        if (self.options["gpsdhost"]):
+            logging.info(f"enabling bettercap's gps module for {self.options['gpsdhost']}:{self.options['gpsdport']}")
+            try:
+                agent.run("gps off")
+            except Exception:
+                logging.info(f"bettercap gps was already off")
+                pass
+
+            agent.run("set gps.device 127.0.0.1:2947; set gps.baudrate 9600; gps on")
+            logging.info("bettercap set and on")
+            self.running = True
+        else:
+            logging.warning("no GPS detected")
+
     def on_handshake(self, agent, filename, access_point, client_station):
         coords = self.gpsd.update_gps()
         if coords and all([
