@@ -18,7 +18,8 @@ class GPSD:
         self.coords = {
             "Latitude": None,
             "Longitude": None,
-            "Altitude": None
+            "Altitude": None,
+            "Date": None
         }
 
     def update_gps(self):
@@ -28,7 +29,8 @@ class GPSD:
                     self.coords = {
                         "Latitude": packet.lat,
                         "Longitude": packet.lon,
-                        "Altitude": packet.alt if packet.mode > 2 else None
+                        "Altitude": packet.alt if packet.mode > 2 else None,
+                        "Date": packet.time
                     }
         return self.coords
 
