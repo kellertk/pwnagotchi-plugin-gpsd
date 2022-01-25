@@ -18,7 +18,8 @@ class GPSD:
         self.coords = {
             "Latitude": None,
             "Longitude": None,
-            "Altitude": None
+            "Altitude": None,
+            "Date": None
         }
 
     def update_gps(self):
@@ -28,7 +29,8 @@ class GPSD:
                     self.coords = {
                         "Latitude": packet.lat,
                         "Longitude": packet.lon,
-                        "Altitude": packet.alt if packet.mode > 2 else None
+                        "Altitude": packet.alt if packet.mode > 2 else None,
+                        "Date": packet.time
                     }
         return self.coords
 
@@ -44,6 +46,21 @@ class gpsd_coord(plugins.Plugin):
     def on_loaded(self):
         self.gpsd = GPSD(self.options['gpsdhost'], self.options['gpsdport'])
         logging.info("[gpsd] plugin loaded")
+
+    def on_ready(self, agent):
+        if (self.options["gpsdhost"]):
+            logging.info(f"enabling bettercap's gps module for {self.options['gpsdhost']}:{self.options['gpsdport']}")
+            try:
+                agent.run("gps off")
+            except Exception:
+                logging.info(f"bettercap gps was already off")
+                pass
+
+            agent.run("set gps.device 127.0.0.1:2947; set gps.baudrate 9600; gps on")
+            logging.info("bettercap set and on")
+            self.running = True
+        else:
+            logging.warning("no GPS detected")
 
     def on_handshake(self, agent, filename, access_point, client_station):
         coords = self.gpsd.update_gps()
