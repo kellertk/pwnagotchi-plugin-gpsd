@@ -16,7 +16,7 @@ As an example:
 ```bash
 pi@pwnagotchi:~ $ sudo apt install gpsd gpsd-clients
 pi@pwnagotchi:~ $ sudo pip3 install gpsd-py3
-pi@pwnagotchi:~ $ sudo bash -c 'cat > /etd/default/gpsd' << EOF
+pi@pwnagotchi:~ $ sudo bash -c 'cat > /etc/default/gpsd' << EOF
 # Default settings for the gpsd init script and the hotplug wrapper.
 
 # Start the gpsd daemon automatically at boot time
