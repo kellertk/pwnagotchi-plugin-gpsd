@@ -45,7 +45,7 @@ Test out your GPS with `gpsmon`. These are generic instructions for setting up a
 In `config.toml`, set
 ```
 main.custom_plugins = "/usr/local/share/pwnagotchi/installed-plugins/"
-main.plugins.gpsd.enable = true
+main.plugins.gpsd.enabled = true
 main.plugins.gpsd.gpsdhost = "127.0.0.1"
 main.plugins.gpsd.gpsdport = 2947
 ```
