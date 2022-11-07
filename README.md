@@ -16,7 +16,7 @@ As an example:
 ```bash
 pi@pwnagotchi:~ $ sudo apt install gpsd gpsd-clients
 pi@pwnagotchi:~ $ sudo pip3 install gpsd-py3
-pi@pwnagotchi:~ $ sudo bash -c 'cat > /etd/default/gpsd' << EOF
+pi@pwnagotchi:~ $ sudo bash -c 'cat > /etc/default/gpsd' << EOF
 # Default settings for the gpsd init script and the hotplug wrapper.
 
 # Start the gpsd daemon automatically at boot time
@@ -45,7 +45,7 @@ Test out your GPS with `gpsmon`. These are generic instructions for setting up a
 In `config.toml`, set
 ```
 main.custom_plugins = "/usr/local/share/pwnagotchi/installed-plugins/"
-main.plugins.gpsd.enable = true
+main.plugins.gpsd.enabled = true
 main.plugins.gpsd.gpsdhost = "127.0.0.1"
 main.plugins.gpsd.gpsdport = 2947
 ```
